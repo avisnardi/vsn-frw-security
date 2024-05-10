@@ -28,6 +28,18 @@ public class User implements UserDetails {
     private String email;
     private String tempRole;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "tb_role_user",
+            joinColumns = {
+                    @JoinColumn(name =  "userId", referencedColumnName = "id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name =  "roleId", referencedColumnName = "id")
+            }
+    )
+    private List<Role> roles;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority( "gerente"  ), new SimpleGrantedAuthority("peao"));

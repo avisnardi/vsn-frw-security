@@ -28,7 +28,11 @@ public class User implements UserDetails {
     private String email;
     private String tempRole;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name="tenant_id", nullable=false)
+    private Tenant tenant;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "tb_role_user",
             joinColumns = {

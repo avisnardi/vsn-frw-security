@@ -19,6 +19,10 @@ public class Role {
     private String id;
     private String Name;
 
+    @ManyToOne
+    @JoinColumn(name="tenant_id", nullable=false)
+    private Tenant tenant;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "tb_role_user",

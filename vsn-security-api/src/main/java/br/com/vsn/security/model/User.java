@@ -1,14 +1,10 @@
 package br.com.vsn.security.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.List;
-
 
 @ToString
 @Getter
@@ -18,16 +14,16 @@ import java.util.List;
 @EqualsAndHashCode
 @Table(name="tb_user")
 @Entity(name="user")
-public class User implements UserDetails {
-    // TODO Configurar estrategia de geração de ID
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String login;
-    private String passwordHash;
     private String email;
+    private String passwordHash;
     private String tempRole;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="tenant_id", nullable=false)
     private Tenant tenant;
@@ -43,39 +39,4 @@ public class User implements UserDetails {
             }
     )
     private List<Role> roles;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority( "gerente"  ), new SimpleGrantedAuthority("peao"));
-    }
-
-    @Override
-    public String getPassword() {
-        return passwordHash;
-    }
-
-    @Override
-    public String getUsername() {
-        return login;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

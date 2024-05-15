@@ -1,5 +1,6 @@
 package br.com.vsn.security.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class Role {
     private String id;
     private String Name;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="tenant_id", nullable=false)
     private Tenant tenant;

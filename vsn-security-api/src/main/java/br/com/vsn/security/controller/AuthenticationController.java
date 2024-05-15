@@ -2,7 +2,9 @@ package br.com.vsn.security.controller;
 
 import br.com.vsn.security.model.AuthenticationDTO;
 import br.com.vsn.security.model.LoginResponseDTO;
-import br.com.vsn.security.model.User;
+import br.com.vsn.security.model.TokenDTO;
+import br.com.vsn.security.model.UserDetailsImpl;
+import br.com.vsn.security.services.AuthenticationService;
 import br.com.vsn.security.services.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +24,11 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private TokenService tokenService;
+    private AuthenticationService authenticationService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationDTO.login(), authenticationDTO.password());
-        var auth = authenticationManager.authenticate(usernamePassword);
-        var token = tokenService.generateToken((User) auth.getPrincipal());
-
+        String token = authenticationService.authenticateUser(authenticationDTO).token();
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 

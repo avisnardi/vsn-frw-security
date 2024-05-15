@@ -1,6 +1,6 @@
 package br.com.vsn.security.services;
 
-import br.com.vsn.security.model.User;
+import br.com.vsn.security.model.UserDetailsImpl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -24,21 +24,21 @@ public class TokenService {
     @Value("${api.security.token.expirationTime}")
     private  String expirationTime;
 
-    public String generateToken(User user) {
+    public String generateToken(UserDetailsImpl user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer(issuer)
-                    .withSubject(user.getLogin())
+                    .withIssuedAt(generateCreationDate())
                     .withExpiresAt(generateExpirationDate())
+                    .withSubject(user.getUsername())
                     .sign(algorithm);
-            return token;
         } catch(JWTCreationException exception) {
             throw new RuntimeException("Error while generation token.", exception);
         }
     }
 
-    public String validateToken(String token) {
+    public String getSubjectFromToken(String token) {
         try {
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -52,6 +52,9 @@ public class TokenService {
         }
     }
 
+    private Instant generateCreationDate(){
+        return LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"));
+    }
     private Instant generateExpirationDate(){
         return LocalDateTime.now().plusHours(Long.parseLong(expirationTime)).toInstant(ZoneOffset.of("-03:00"));
     }
